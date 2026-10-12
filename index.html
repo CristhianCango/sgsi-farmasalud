@@ -1,0 +1,967 @@
+<title>SGSI FarmaSalud El Oro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: rail de navegación fijo a la izquierda + columna de trabajo; en móvil el rail se vuelve una barra de chips horizontal */
+:root{
+  --bg:#F6F8F6; --surface:#FFFFFF; --surface-2:#EDF2EF; --surface-3:#E3EAE6;
+  --border:#D5DED9; --border-strong:#B9C6C0;
+  --fg:#13201D; --fg-2:#3A4B46; --muted:#62736D;
+  --accent:#0F6B5C; --accent-2:#0B5349; --accent-soft:#D8EDE7;
+  --bajo:#2F7F5F; --bajo-bg:#DFF0E7;
+  --medio:#9A7310; --medio-bg:#F7EBCC;
+  --alto:#BD5A1E; --alto-bg:#FAE1D1;
+  --critico:#A62B28; --critico-bg:#F7D9D7;
+  --shadow:0 1px 2px rgba(19,32,29,.06), 0 8px 24px -16px rgba(19,32,29,.25);
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1413; --surface:#151F1D; --surface-2:#1C2724; --surface-3:#24312D;
+    --border:#2B3A36; --border-strong:#3C4F49;
+    --fg:#E9F0ED; --fg-2:#C3D0CB; --muted:#93A49E;
+    --accent:#4FD1B4; --accent-2:#7FE3CC; --accent-soft:#143831;
+    --bajo:#67C59A; --bajo-bg:#15372A;
+    --medio:#E2B655; --medio-bg:#3A2F12;
+    --alto:#F09159; --alto-bg:#3E2616;
+    --critico:#EE7872; --critico-bg:#401D1C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1413; --surface:#151F1D; --surface-2:#1C2724; --surface-3:#24312D;
+  --border:#2B3A36; --border-strong:#3C4F49;
+  --fg:#E9F0ED; --fg-2:#C3D0CB; --muted:#93A49E;
+  --accent:#4FD1B4; --accent-2:#7FE3CC; --accent-soft:#143831;
+  --bajo:#67C59A; --bajo-bg:#15372A;
+  --medio:#E2B655; --medio-bg:#3A2F12;
+  --alto:#F09159; --alto-bg:#3E2616;
+  --critico:#EE7872; --critico-bg:#401D1C;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:1.55;margin:0}
+h1,h2,h3,h4{font-family:var(--font-display);text-wrap:balance;margin:0;line-height:1.15;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--accent)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:0 56px}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:36px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr);gap:18px}}
+
+/* ---------- encabezado ---------- */
+.masthead{border-bottom:1px solid var(--border);background:
+   linear-gradient(180deg,var(--accent-soft),transparent 72%);}
+.mast-inner{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:30px 24px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+h1{font-size:clamp(28px,5vw,46px);font-weight:800}
+.sub{color:var(--fg-2);max-width:62ch;margin-top:10px;font-size:15.5px}
+.mast-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tagpill{font-family:var(--font-mono);font-size:11.5px;border:1px solid var(--border-strong);border-radius:999px;padding:4px 10px;color:var(--fg-2);background:var(--surface)}
+
+/* ---------- navegación ---------- */
+nav.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;flex-direction:column;gap:2px;padding-top:28px}
+nav.rail a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--muted);font-size:13.5px;padding:7px 10px;border-radius:7px;border-left:2px solid transparent}
+nav.rail a span{font-family:var(--font-mono);font-size:11px;opacity:.75}
+nav.rail a:hover{background:var(--surface-2);color:var(--fg)}
+nav.rail a.on{color:var(--accent);border-left-color:var(--accent);background:var(--surface-2);font-weight:600}
+@media (max-width:900px){
+  nav.rail{flex-direction:row;overflow-x:auto;padding:10px 0 4px;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:30;border-bottom:1px solid var(--border);gap:6px}
+  nav.rail a{white-space:nowrap;border-left:0;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
+  nav.rail a.on{border-color:var(--accent)}
+  nav.rail a span{display:none}
+}
+
+/* ---------- secciones ---------- */
+section{padding-top:36px;scroll-margin-top:90px}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:20px}
+.sec-num{font-family:var(--font-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:2px 7px;flex:none}
+.sec-head h2{font-size:clamp(20px,3vw,26px);font-weight:700}
+.lede{color:var(--fg-2);max-width:72ch;margin-bottom:18px;font-size:15px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(228px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card h3{font-size:16px;margin-bottom:8px}
+.card h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--font-body);font-weight:600;margin-bottom:6px}
+.card p{font-size:14px;color:var(--fg-2)}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .n{font-family:var(--font-display);font-size:clamp(26px,4vw,34px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}
+.kpi.crit .n{color:var(--critico)} .kpi.acc .n{color:var(--accent)}
+
+/* ---------- listas / chips ---------- */
+ul.ticks{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+ul.ticks li{position:relative;padding-left:18px;font-size:14px;color:var(--fg-2)}
+ul.ticks li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:12.5px;border:1px solid var(--border-strong);background:var(--surface-2);border-radius:999px;padding:4px 11px;color:var(--fg-2)}
+.badge{font-family:var(--font-mono);font-size:11px;font-weight:600;border-radius:5px;padding:2px 7px;display:inline-block;white-space:nowrap}
+.b-bajo{background:var(--bajo-bg);color:var(--bajo)} .b-medio{background:var(--medio-bg);color:var(--medio)}
+.b-alto{background:var(--alto-bg);color:var(--alto)} .b-critico{background:var(--critico-bg);color:var(--critico)}
+.b-acc{background:var(--accent-soft);color:var(--accent)}
+.b-neutral{background:var(--surface-3);color:var(--fg-2)}
+
+/* ---------- botones / controles ---------- */
+button{font-family:inherit;font-size:13px;cursor:pointer;color:var(--fg-2);background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;padding:6px 13px;transition:background .15s,border-color .15s,color .15s}
+button:hover{background:var(--surface-2);color:var(--fg)}
+button[aria-pressed="true"],button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+:root[data-theme="dark"] button[aria-pressed="true"],:root[data-theme="dark"] button.on{color:#07201B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button[aria-pressed="true"],:root:not([data-theme="light"]) button.on{color:#07201B}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=search],select{font-family:inherit;font-size:13px;padding:7px 11px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--fg);min-width:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.toolbar .spacer{flex:1 1 20px}
+.count{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+
+/* ---------- tablas ---------- */
+.tscroll{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px}
+th{text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:11px 12px;border-bottom:1px solid var(--border);background:var(--surface-2);position:sticky;top:0;z-index:1}
+td{padding:11px 12px;border-bottom:1px solid var(--border);color:var(--fg-2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--font-mono);font-size:12px;color:var(--fg);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;text-align:center}
+
+/* ---------- riesgos: filas desplegables ---------- */
+tr.risk{cursor:pointer}
+tr.risk:hover td{background:var(--surface-2)}
+tr.risk td:first-child{border-left:3px solid transparent}
+tr.risk.lv-bajo td:first-child{border-left-color:var(--bajo)}
+tr.risk.lv-medio td:first-child{border-left-color:var(--medio)}
+tr.risk.lv-alto td:first-child{border-left-color:var(--alto)}
+tr.risk.lv-critico td:first-child{border-left-color:var(--critico)}
+tr.detail td{background:var(--surface-2);padding:0}
+.detail-in{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));padding:14px 16px 16px}
+.detail-in h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px;font-family:var(--font-body)}
+.detail-in p{font-size:13.5px;color:var(--fg-2)}
+.chev{display:inline-block;transition:transform .18s;color:var(--muted);font-size:11px}
+tr.risk.open .chev{transform:rotate(90deg)}
+
+/* ---------- matriz ---------- */
+.matrix-wrap{display:grid;gap:18px;grid-template-columns:minmax(300px,1.35fr) minmax(240px,1fr);align-items:start}
+@media (max-width:820px){.matrix-wrap{grid-template-columns:minmax(0,1fr)}}
+.matrix{display:grid;grid-template-columns:auto repeat(5,minmax(0,1fr));gap:5px}
+.m-axis{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center}
+.m-cell{aspect-ratio:1/1;border-radius:8px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:var(--font-mono);cursor:pointer;padding:2px;min-height:44px}
+.m-cell .c{font-size:15px;font-weight:600;line-height:1}
+.m-cell .s{font-size:9px;opacity:.8;line-height:1}
+.m-cell:hover{border-color:var(--fg)}
+.m-cell.sel{border-color:var(--fg);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--fg)}
+.m-cell.empty{opacity:.42}
+.m-bajo{background:var(--bajo-bg);color:var(--bajo)} .m-medio{background:var(--medio-bg);color:var(--medio)}
+.m-alto{background:var(--alto-bg);color:var(--alto)} .m-critico{background:var(--critico-bg);color:var(--critico)}
+.axis-label{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
+.vaxis{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:center}
+
+/* ---------- barras ---------- */
+.bars{display:grid;gap:10px}
+.bar-row{display:grid;grid-template-columns:86px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:12.5px}
+.track{height:12px;border-radius:999px;background:var(--surface-3);overflow:hidden}
+.fill{height:100%;border-radius:999px;transition:width .5s ease}
+.bar-row .v{font-family:var(--font-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--fg-2)}
+
+/* ---------- controles ISO ---------- */
+.ctrl{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 15px;display:grid;gap:7px;box-shadow:var(--shadow)}
+.ctrl .top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.ctrl .code{font-family:var(--font-mono);font-size:12px;color:var(--accent);font-weight:600}
+.ctrl h3{font-size:14.5px;margin:0}
+.ctrl p{font-size:13px}
+.ctrl .apply{font-size:13px;color:var(--fg-2);border-left:2px solid var(--accent);padding-left:10px}
+.state{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;border-radius:5px;padding:2px 7px;white-space:nowrap}
+.s-impl{background:var(--bajo-bg);color:var(--bajo)} .s-curso{background:var(--medio-bg);color:var(--medio)} .s-pend{background:var(--critico-bg);color:var(--critico)}
+
+/* ---------- CID / tabs ---------- */
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.cid-panel{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.cid-letter{font-family:var(--font-display);font-size:34px;font-weight:800;color:var(--accent);line-height:1}
+
+/* ---------- clasificación ---------- */
+.clas{border:1px solid var(--border);border-radius:11px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.clas .bar{height:5px}
+.clas .in{padding:14px 15px;display:grid;gap:7px}
+.clas h3{font-size:15px}
+.clas dl{margin:0;display:grid;gap:5px;font-size:13px}
+.clas dt{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.clas dd{margin:0;color:var(--fg-2)}
+
+/* ---------- plan de acción ---------- */
+.accion{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px;box-shadow:var(--shadow)}
+.accion input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);margin-top:3px;cursor:pointer}
+.accion.done .body{opacity:.55}
+.accion.done h3{text-decoration:line-through}
+.accion h3{font-size:14.5px;margin-bottom:4px}
+.accion .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;align-items:center}
+.accion p{font-size:13.5px;color:var(--fg-2)}
+.accion .ctl{font-family:var(--font-mono);font-size:11.5px;color:var(--accent)}
+.progress{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.progress .track{flex:1 1 160px;height:9px}
+
+/* ---------- ilustraciones ---------- */
+.ico{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sec-ico{width:21px;height:21px;color:var(--accent);align-self:center}
+.mast-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:30px;align-items:center}
+@media (max-width:820px){.mast-grid{grid-template-columns:minmax(0,1fr)}.hero-art{max-width:300px;margin-top:4px}}
+.hero-art{width:100%;height:auto;max-width:340px;display:block}
+.vigs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.vig{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:13px;box-shadow:var(--shadow);display:grid;gap:7px;justify-items:start}
+.vig .art{width:100%;height:68px}
+.vig h3{font-size:13.5px}
+.vig p{font-size:12.5px;color:var(--muted);line-height:1.4}
+td .ico{width:15px;height:15px;color:var(--accent);vertical-align:-2px;margin-right:7px}
+.creditos{margin-top:30px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.creditos h3{font-size:15px;margin-bottom:4px}
+.creditos .lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 18px;margin-top:12px}
+.creditos .lista div{font-size:13.5px;color:var(--fg-2);display:flex;gap:8px;align-items:baseline}
+.creditos .lista span{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-cruz" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-2.9 8.2-7 10-4.1-1.8-7-5.6-7-10V6z"/><path d="M9 12.2l2 2 4-4"/></symbol>
+<symbol id="i-receta" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 12h7M9 16h5"/></symbol>
+<symbol id="i-candado" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/><path d="M12 14v3"/></symbol>
+<symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.5l9 16H3z"/><path d="M12 10v4.5M12 17.2v.1"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M9 4h6a2 2 0 012 2v0h1.5A1.5 1.5 0 0120 7.5V19a2 2 0 01-2 2H6a2 2 0 01-2-2V7.5A1.5 1.5 0 015.5 6H7a2 2 0 012-2z"/><path d="M8.5 13.5l2.4 2.4 4.6-4.9"/></symbol>
+<symbol id="i-servidor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/><path d="M7 7h.01M7 17h.01"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></symbol>
+<symbol id="i-nube" viewBox="0 0 24 24"><path d="M7.5 18.5A4.5 4.5 0 017 9.6 6 6 0 0118.4 11a3.8 3.8 0 01-.4 7.5z"/></symbol>
+<symbol id="i-persona" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20a7.2 7.2 0 0114.4 0"/></symbol>
+<symbol id="i-frasco" viewBox="0 0 24 24"><path d="M9 3h6v3l3 5v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8l3-5z"/><path d="M6 14h12M12 9.5v3M10.5 11h3"/></symbol>
+</defs></svg>
+
+<header class="masthead">
+  <div class="mast-inner">
+   <div class="mast-grid">
+    <div>
+    <div class="eyebrow">Unidades 1 y 2 · Seguridad de la información y gestión de riesgos</div>
+    <h1>FarmaSalud El Oro S.A.</h1>
+    <p class="sub">Tablero de seguridad de la información y riesgos de una cadena de 6 farmacias en la provincia de El Oro. Reúne los activos, la clasificación de la información, los controles de la ISO/IEC 27001:2022, la matriz de riesgos y el plan de acción.</p>
+    <div class="mast-meta">
+      <span class="tagpill">Mediana empresa</span>
+      <span class="tagpill">Comercio farmacéutico</span>
+      <span class="tagpill">70 empleados</span>
+      <span class="tagpill">Matriz Machala + 5 sucursales</span>
+      <span class="tagpill">Datos sensibles · LOPDP</span>
+    </div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 340 230" role="img" aria-label="Ilustración de la fachada de una farmacia con su cruz, vitrina y estantes">
+      <rect x="2" y="2" width="336" height="226" rx="16" fill="var(--surface-2)"/>
+      <!-- acera -->
+      <path d="M14 196h312" stroke="var(--border-strong)" stroke-width="2" fill="none"/>
+      <!-- edificio -->
+      <rect x="40" y="52" width="260" height="144" rx="6" fill="var(--surface)" stroke="var(--border-strong)" stroke-width="2"/>
+      <!-- rótulo -->
+      <rect x="40" y="52" width="260" height="30" rx="6" fill="var(--accent)"/>
+      <text x="92" y="72" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="var(--surface)" letter-spacing="1.4">FARMASALUD</text>
+      <rect x="58" y="60" width="16" height="16" rx="3" fill="var(--surface)"/>
+      <path d="M66 63.5v9M61.5 68h9" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- toldo a rayas -->
+      <path d="M40 82h260l-12 20H52z" fill="var(--accent-soft)"/>
+      <path d="M80 82l-7 20M118 82l-7 20M156 82l-7 20M194 82l-7 20M232 82l-7 20M270 82l-7 20" stroke="var(--accent)" stroke-width="2" opacity=".55"/>
+      <!-- vitrina con estantes -->
+      <rect x="56" y="112" width="130" height="72" rx="4" fill="var(--accent-soft)" stroke="var(--border-strong)" stroke-width="1.5"/>
+      <path d="M56 138h130M56 162h130" stroke="var(--border-strong)" stroke-width="1.5"/>
+      <g fill="var(--accent)" opacity=".75">
+        <rect x="64" y="122" width="9" height="14" rx="2"/><rect x="78" y="126" width="12" height="10" rx="2"/>
+        <rect x="96" y="120" width="8" height="16" rx="2"/><rect x="110" y="125" width="14" height="11" rx="2"/>
+        <rect x="132" y="122" width="9" height="14" rx="2"/><rect x="148" y="127" width="13" height="9" rx="2"/>
+        <rect x="66" y="148" width="13" height="12" rx="2"/><rect x="86" y="145" width="9" height="15" rx="2"/>
+        <rect x="102" y="150" width="15" height="10" rx="2"/><rect x="124" y="146" width="10" height="14" rx="2"/>
+        <rect x="142" y="149" width="12" height="11" rx="2"/><rect x="162" y="145" width="9" height="15" rx="2"/>
+        <rect x="68" y="170" width="11" height="12" rx="2"/><rect x="86" y="172" width="14" height="10" rx="2"/>
+        <rect x="108" y="169" width="9" height="13" rx="2"/><rect x="126" y="173" width="13" height="9" rx="2"/>
+      </g>
+      <!-- puerta -->
+      <rect x="202" y="112" width="60" height="84" rx="4" fill="var(--surface-3)" stroke="var(--border-strong)" stroke-width="1.5"/>
+      <path d="M232 112v84" stroke="var(--border-strong)" stroke-width="1.5"/>
+      <circle cx="227" cy="156" r="2.6" fill="var(--accent)"/><circle cx="237" cy="156" r="2.6" fill="var(--accent)"/>
+      <!-- cruz colgante -->
+      <path d="M300 96h14" stroke="var(--border-strong)" stroke-width="2"/>
+      <rect x="296" y="100" width="34" height="34" rx="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+      <path d="M313 108v18M304 117h18" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+      <!-- maceta -->
+      <path d="M22 196v-12h16v12z" fill="var(--surface-3)" stroke="var(--border-strong)" stroke-width="1.5"/>
+      <path d="M30 184c0-8-6-10-6-16 5 0 8 4 8 9M30 184c0-6 5-9 9-9 0 6-4 9-9 9" fill="var(--bajo-bg)" stroke="var(--bajo)" stroke-width="1.5"/>
+    </svg>
+   </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n" id="k-act">9</div><div class="l">Activos de información inventariados</div></div>
+      <div class="kpi"><div class="n" id="k-rie">15</div><div class="l">Riesgos identificados y valorados</div></div>
+      <div class="kpi crit"><div class="n" id="k-cri">3</div><div class="l">Riesgos de nivel crítico</div></div>
+      <div class="kpi"><div class="n" id="k-prom">10,4</div><div class="l">Nivel de riesgo promedio (de 25)</div></div>
+      <div class="kpi acc"><div class="n" id="k-cob">34%</div><div class="l">Cobertura de controles ISO 27001</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="layout">
+  <nav class="rail" aria-label="Secciones">
+    <a href="#empresa" class="on"><span>01</span>Empresa</a>
+    <a href="#seguridad"><span>02</span>Seguridad</a>
+    <a href="#clasificacion"><span>03</span>Clasificación</a>
+    <a href="#iso"><span>04</span>ISO 27001</a>
+    <a href="#riesgos"><span>05</span>Riesgos</a>
+    <a href="#plan"><span>06</span>Plan de acción</a>
+  </nav>
+
+  <main>
+    <!-- 1 ───────────────────────── -->
+    <section id="empresa">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Información de la empresa</h2></div>
+      <p class="lede">FarmaSalud El Oro S.A. es una cadena farmacéutica con matriz en Machala y sucursales en Pasaje, Santa Rosa, Huaquillas, El Guabo y Arenillas. Vende medicamentos con y sin receta, productos de higiene y cuidado personal, y ofrece entrega a domicilio y toma de presión y glucosa. Trabaja con recetas y datos de salud, que la LOPDP trata como datos sensibles.</p>
+
+      <div class="grid g2">
+        <div class="card">
+          <h4>Procesos de negocio</h4>
+          <div class="chips" style="margin-top:8px">
+            <span class="chip">Compras y abastecimiento</span>
+            <span class="chip">Recepción y almacenamiento</span>
+            <span class="chip">Venta y dispensación</span>
+            <span class="chip">Facturación electrónica</span>
+            <span class="chip">Entrega a domicilio</span>
+            <span class="chip">Control de medicamentos de receta</span>
+            <span class="chip">Plan de puntos y clientes</span>
+            <span class="chip">Contabilidad y nómina</span>
+          </div>
+          <p class="note">Los cuatro primeros son los procesos críticos: si se detienen, la farmacia deja de vender.</p>
+        </div>
+        <div class="card">
+          <h4>Infraestructura tecnológica</h4>
+          <ul class="ticks" style="margin-top:8px">
+            <li>Servidor físico único en la matriz con el ERP/POS e inventario.</li>
+            <li>Enlace de fibra por local y VPN entre sucursales y matriz.</li>
+            <li>Microsoft 365 para correo y archivos; WhatsApp Business para pedidos.</li>
+            <li>Facturación electrónica conectada al SRI.</li>
+            <li>18 terminales de caja, 12 computadores administrativos y CCTV por sucursal.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="vigs">
+        <div class="vig">
+          <svg class="art" viewBox="0 0 120 68" role="img" aria-label="Mortero y pistilo de farmacia">
+            <path d="M34 26h52l-8 22a10 10 0 01-9 7H51a10 10 0 01-9-7z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M28 26h64" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M74 22L96 8" stroke="var(--fg-2)" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="60" cy="40" r="4" fill="var(--accent)" opacity=".5"/>
+          </svg>
+          <h3>Dispensación</h3><p>Venta con y sin receta en las seis farmacias.</p>
+        </div>
+        <div class="vig">
+          <svg class="art" viewBox="0 0 120 68" role="img" aria-label="Blíster de pastillas">
+            <rect x="26" y="12" width="68" height="44" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5"/>
+            <g fill="var(--surface)" stroke="var(--accent)" stroke-width="2">
+              <circle cx="42" cy="26" r="6"/><circle cx="60" cy="26" r="6"/><circle cx="78" cy="26" r="6"/>
+              <circle cx="42" cy="43" r="6"/><circle cx="60" cy="43" r="6"/><circle cx="78" cy="43" r="6"/>
+            </g>
+          </svg>
+          <h3>Inventario</h3><p>Stock por percha conciliado con el ERP.</p>
+        </div>
+        <div class="vig">
+          <svg class="art" viewBox="0 0 120 68" role="img" aria-label="Receta médica con sello">
+            <path d="M38 6h30l16 16v40H38z" fill="var(--surface)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M68 6v16h16" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+            <path d="M46 34h28M46 42h20M46 50h12" stroke="var(--fg-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="76" cy="48" r="9" fill="none" stroke="var(--critico)" stroke-width="2.5"/>
+            <path d="M72 48h8M76 44v8" stroke="var(--critico)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <h3>Receta y controlados</h3><p>Datos de salud: información restringida.</p>
+        </div>
+        <div class="vig">
+          <svg class="art" viewBox="0 0 120 68" role="img" aria-label="Terminal de caja con comprobante">
+            <rect x="28" y="24" width="52" height="34" rx="5" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5"/>
+            <rect x="36" y="31" width="36" height="9" rx="2" fill="var(--surface)"/>
+            <g fill="var(--accent)"><circle cx="40" cy="49" r="3"/><circle cx="52" cy="49" r="3"/><circle cx="64" cy="49" r="3"/></g>
+            <path d="M80 36h20v26l-6-4-7 4-7-4z" fill="var(--surface)" stroke="var(--fg-2)" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M86 44h9M86 51h6" stroke="var(--fg-2)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h3>Facturación</h3><p>Comprobantes electrónicos emitidos al SRI.</p>
+        </div>
+        <div class="vig">
+          <svg class="art" viewBox="0 0 120 68" role="img" aria-label="Motocicleta de entrega a domicilio">
+            <circle cx="34" cy="48" r="11" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+            <circle cx="88" cy="48" r="11" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+            <path d="M34 48l14-18h16l10 18" fill="none" stroke="var(--fg-2)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M64 30h12l6 8" fill="none" stroke="var(--fg-2)" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="72" y="14" width="24" height="18" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5"/>
+            <path d="M84 18v10M79 23h10" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <h3>Entrega a domicilio</h3><p>Pedidos por la web y por WhatsApp Business.</p>
+        </div>
+      </div>
+
+      <h4 style="margin:22px 0 10px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--font-body)">Activos de información</h4>
+      <div class="tscroll">
+        <table>
+          <thead><tr><th>Activo</th><th>Tipo</th><th>Propietario</th><th>Criticidad</th><th>Principio más expuesto</th></tr></thead>
+          <tbody id="t-activos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2 ───────────────────────── -->
+    <section id="seguridad">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Seguridad de la información</h2></div>
+      <p class="lede">La seguridad de la información protege tres principios a la vez. En una farmacia los tres pesan distinto: la confidencialidad por los datos de salud, la integridad por el inventario y las recetas, y la disponibilidad porque sin sistema no hay venta.</p>
+
+      <div class="tabs" role="tablist" aria-label="Principios de seguridad">
+        <button role="tab" aria-pressed="true" data-cid="C">Confidencialidad</button>
+        <button role="tab" aria-pressed="false" data-cid="I">Integridad</button>
+        <button role="tab" aria-pressed="false" data-cid="D">Disponibilidad</button>
+      </div>
+      <div class="cid-panel" id="cid-panel"></div>
+
+      <h4 style="margin:26px 0 10px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--font-body)">Seguridad física y seguridad lógica</h4>
+      <div class="toolbar">
+        <button data-sl="todas" class="on">Ambas</button>
+        <button data-sl="fisica">Física</button>
+        <button data-sl="logica">Lógica</button>
+      </div>
+      <div class="grid g3" id="sl-grid"></div>
+    </section>
+
+    <!-- 3 ───────────────────────── -->
+    <section id="clasificacion">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Clasificación de la información</h2></div>
+      <p class="lede">Cada documento y cada base de datos recibe una de estas cuatro etiquetas. La etiqueta decide quién la consulta, cómo se guarda y cuánto tiempo se conserva.</p>
+      <div class="grid g4" id="clas-grid"></div>
+    </section>
+
+    <!-- 4 ───────────────────────── -->
+    <section id="iso">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Aplicación de la ISO/IEC 27001:2022</h2></div>
+      <p class="lede">La norma agrupa 93 controles en cuatro temas. Estos son los 16 que FarmaSalud necesita primero, con su estado actual. La cobertura cuenta un control implantado como completo y uno en curso como medio.</p>
+      <div class="toolbar">
+        <button data-tema="todos" class="on">Todos</button>
+        <button data-tema="Organizacional">Organizacionales</button>
+        <button data-tema="Personas">Personas</button>
+        <button data-tema="Físico">Físicos</button>
+        <button data-tema="Tecnológico">Tecnológicos</button>
+        <span class="spacer"></span>
+        <select id="f-estado" aria-label="Filtrar por estado">
+          <option value="todos">Cualquier estado</option>
+          <option value="Implantado">Implantado</option>
+          <option value="En curso">En curso</option>
+          <option value="Pendiente">Pendiente</option>
+        </select>
+        <span class="count" id="c-iso"></span>
+      </div>
+      <div class="grid g2" id="iso-grid"></div>
+    </section>
+
+    <!-- 5 ───────────────────────── -->
+    <section id="riesgos">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Gestión de riesgos</h2></div>
+      <p class="lede">El nivel de cada riesgo se calcula como probabilidad × impacto, en escala de 1 a 5 cada una. El resultado se clasifica en bajo (1–4), medio (5–9), alto (10–14) y crítico (15–25). Toque una casilla del mapa para filtrar la tabla.</p>
+
+      <div class="matrix-wrap">
+        <div class="card">
+          <h4>Mapa de riesgos</h4>
+          <div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;margin-top:10px">
+            <div class="vaxis">Impacto →</div>
+            <div>
+              <div class="matrix" id="matrix"></div>
+              <div class="axis-label">Probabilidad →</div>
+            </div>
+          </div>
+          <div class="chips" style="margin-top:12px">
+            <span class="badge b-bajo">Bajo 1–4</span>
+            <span class="badge b-medio">Medio 5–9</span>
+            <span class="badge b-alto">Alto 10–14</span>
+            <span class="badge b-critico">Crítico 15–25</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Distribución por nivel</h4>
+          <div class="bars" id="bars-nivel" style="margin-top:12px"></div>
+          <h4 style="margin-top:20px">Riesgos por categoría</h4>
+          <div class="bars" id="bars-cat" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:20px">
+        <button data-nivel="todos" class="on">Todos</button>
+        <button data-nivel="Crítico">Críticos</button>
+        <button data-nivel="Alto">Altos</button>
+        <button data-nivel="Medio">Medios</button>
+        <button data-nivel="Bajo">Bajos</button>
+        <span class="spacer"></span>
+        <input type="search" id="f-busca" placeholder="Buscar riesgo, amenaza o control" aria-label="Buscar riesgo">
+        <select id="f-orden" aria-label="Ordenar">
+          <option value="nivel">Mayor nivel primero</option>
+          <option value="id">Código</option>
+          <option value="prob">Mayor probabilidad</option>
+          <option value="imp">Mayor impacto</option>
+        </select>
+        <span class="count" id="c-riesgos"></span>
+      </div>
+      <div class="tscroll">
+        <table>
+          <thead><tr><th style="width:74px">Código</th><th>Riesgo</th><th>Categoría</th><th class="num">P</th><th class="num">I</th><th class="num">P×I</th><th>Nivel</th></tr></thead>
+          <tbody id="t-riesgos"></tbody>
+        </table>
+      </div>
+      <p class="note">Cada fila se despliega con la amenaza, la vulnerabilidad, la consecuencia y el control de la norma que le corresponde.</p>
+    </section>
+
+    <!-- 6 ───────────────────────── -->
+    <section id="plan">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Plan de acción</h2></div>
+      <p class="lede">Una acción por riesgo, con el control de la ISO/IEC 27001 que la respalda, su responsable y su plazo. Marque las que vaya completando: el avance se guarda en este navegador.</p>
+      <div class="progress">
+        <span id="p-text">0 de 15 acciones completadas</span>
+        <div class="track"><div class="fill" id="p-fill" style="width:0%;background:var(--accent)"></div></div>
+        <button id="p-reset">Reiniciar</button>
+      </div>
+      <div class="toolbar">
+        <button data-prio="todas" class="on">Todas</button>
+        <button data-prio="Crítica">Crítica</button>
+        <button data-prio="Alta">Alta</button>
+        <button data-prio="Media">Media</button>
+        <button data-prio="Baja">Baja</button>
+        <span class="spacer"></span>
+        <span class="count" id="c-plan"></span>
+      </div>
+      <div class="grid g2" id="plan-grid"></div>
+    </section>
+
+    <div class="creditos">
+      <h3>Grupo N.° 7</h3>
+      <p style="font-size:13px;color:var(--muted)">Sistema de Gestión de la Seguridad de la Información · Universidad Estatal de Milagro · Docente: Mgs. Jessica Janina Cabezas Quinto</p>
+      <div class="lista">
+        <div><span>01</span>Walter Julio Astudillo Banchón</div>
+        <div><span>02</span>Cristhian Rafael Cango Estrada</div>
+        <div><span>03</span>María Verónica Cedillo Carpio</div>
+        <div><span>04</span>Yaritza Jecenia Lastra Klinger</div>
+        <div><span>05</span>Carmen Gabriela Guzmán Boconsaca</div>
+        <div><span>06</span>Nicole Yamileth Narváez Abad</div>
+      </div>
+    </div>
+
+    <footer>
+      <span>FarmaSalud El Oro S.A. · caso de estudio académico</span>
+      <span>Referencias: ISO/IEC 27001:2022 · ISO/IEC 27002:2022 · ISO/IEC 27005:2022 · LOPDP Ecuador</span>
+    </footer>
+  </main>
+</div>
+</div>
+
+<script>
+/* ===================== DATOS ===================== */
+const ACTIVOS = [
+  ["Base de datos de clientes y recetas","Información","Químico farmacéutico","Alta","Confidencialidad"],
+  ["Sistema ERP/POS de ventas e inventario","Software","Jefe de TI","Alta","Disponibilidad"],
+  ["Servidor principal de la matriz","Hardware","Jefe de TI","Alta","Disponibilidad"],
+  ["Facturación electrónica (SRI)","Servicio","Contabilidad","Alta","Integridad"],
+  ["Correo institucional Microsoft 365","Servicio","Jefe de TI","Alta","Confidencialidad"],
+  ["Terminales de caja y computadores","Hardware","Jefes de sucursal","Media","Disponibilidad"],
+  ["Página web y pedidos en línea","Servicio","Gerencia","Media","Integridad"],
+  ["Registro de medicamentos controlados","Información","Químico farmacéutico","Alta","Integridad"],
+  ["Conocimiento operativo del personal","Humano","Gerencia","Media","Disponibilidad"]
+];
+
+const CID = {
+  C:[["Qué significa","Solo accede a la información quien tiene una razón de trabajo para hacerlo."],
+     ["En FarmaSalud","Las recetas, el historial de compras y el diagnóstico implícito en un medicamento son datos de salud: solo el farmacéutico y el jefe de sucursal pueden consultarlos."],
+     ["Qué la rompe","Un cajero que ve la base completa, una exportación a Excel enviada por WhatsApp o una credencial robada por phishing."],
+     ["Cómo se protege","Perfiles por rol, cifrado de la base, MFA en el correo y registro de cada consulta a datos de clientes."]],
+  I:[["Qué significa","La información es exacta y completa, y nadie la altera sin autorización ni sin dejar rastro."],
+     ["En FarmaSalud","El stock del sistema debe coincidir con la percha, el precio cobrado con el autorizado y la factura con la venta real."],
+     ["Qué la rompe","Anulaciones sin control, ajustes manuales de inventario, un medicamento controlado dispensado sin registrar."],
+     ["Cómo se protege","Bitácora de cambios, anulaciones aprobadas por el jefe de sucursal, conciliación de inventario y firma electrónica en la facturación."]],
+  D:[["Qué significa","La información y los servicios están disponibles cuando el negocio los necesita."],
+     ["En FarmaSalud","Las seis farmacias venden contra el mismo servidor: si cae, no hay cobro, ni factura, ni consulta de stock."],
+     ["Qué la rompe","Falla del servidor, ransomware, corte eléctrico o caída del enlace de internet."],
+     ["Cómo se protege","Respaldos 3-2-1 probados, réplica del ERP en la nube, UPS por caja y enlace secundario 4G."]]
+};
+
+const SEGFIS = [
+  ["fisica","Control de acceso a la matriz","El cuarto de servidores se cierra con llave y solo el jefe de TI y la Gerencia tienen copia. Visitas registradas en bitácora."],
+  ["fisica","Videovigilancia","CCTV en caja, bodega y acceso de personal, con retención mínima de 30 días y revisión semanal del estado del grabador."],
+  ["fisica","Energía y ambiente","UPS por terminal de caja, generador en la matriz y control de temperatura del cuarto de equipos."],
+  ["fisica","Equipos y bodega","Anclaje de terminales, inventario etiquetado por sucursal y bodega de medicamentos controlados con llave y registro."],
+  ["logica","Identidad y autenticación","Cuenta nominal por empleado, contraseña de 12 caracteres y MFA obligatorio en correo, VPN y ERP."],
+  ["logica","Control de acceso por rol","Perfiles de cajero, farmacéutico, bodega, contabilidad y administrador, bajo el principio de mínimo privilegio."],
+  ["logica","Protección del puesto de trabajo","EDR en todos los equipos, parches mensuales, bloqueo de USB de almacenamiento en cajas y cifrado de disco."],
+  ["logica","Red y respaldos","VPN entre sucursales, wifi de clientes separado de la red de cajas y respaldo diario cifrado en la nube."]
+];
+
+const CLASES = [
+  ["Pública","var(--bajo)","Catálogo de productos, promociones, horarios de atención y contenido de la página web.","Cualquier persona","Sin restricción; solo se controla quién la publica."],
+  ["Interna","var(--medio)","Procedimientos, listas de precios de compra, memorandos y reportes de ventas por sucursal.","Todo el personal","Red interna y Microsoft 365; no sale de la empresa sin autorización."],
+  ["Confidencial","var(--alto)","Contratos, nómina, datos de proveedores, informes financieros y credenciales de sistemas.","Gerencia, contabilidad y TI","Carpeta restringida, cifrado y registro de accesos."],
+  ["Restringida","var(--critico)","Recetas, historial de medicación y datos de salud de clientes; registro de medicamentos controlados.","Farmacéutico y jefe de sucursal","Cifrado, acceso auditado, prohibida su exportación y tratada bajo la LOPDP."]
+];
+
+const CONTROLES = [
+  ["5.1","Organizacional","Políticas de seguridad de la información","La dirección define, aprueba y comunica una política y la revisa periódicamente.","Política de una página firmada por la Gerencia, socializada en la inducción y revisada cada año.","En curso"],
+  ["5.9","Organizacional","Inventario de activos de información","Mantener un inventario de activos con su propietario asignado.","Inventario de 9 activos con propietario, criticidad y ubicación, actualizado cada trimestre.","Implantado"],
+  ["5.12","Organizacional","Clasificación de la información","Clasificar la información según su valor y su sensibilidad.","Cuatro niveles: pública, interna, confidencial y restringida, con etiqueta en carpetas y reportes.","Pendiente"],
+  ["5.15","Organizacional","Control de acceso","Reglas de acceso basadas en requisitos del negocio y en el mínimo privilegio.","Matriz de acceso por rol: gerencia, farmacéutico, cajero, bodega, contabilidad y TI.","Pendiente"],
+  ["5.24","Organizacional","Planificación de la gestión de incidentes","Definir roles, procedimientos y canales de reporte antes de que ocurra un incidente.","Procedimiento de 5 fases (detección, reporte, contención, recuperación, prevención) y buzón seguridad@.","Pendiente"],
+  ["5.29","Organizacional","Seguridad durante una disrupción","Mantener la seguridad de la información cuando se activa la contingencia.","Modo de venta manual con lista de precios diaria y conciliación posterior en el ERP.","Pendiente"],
+  ["5.34","Organizacional","Privacidad y protección de datos personales","Cumplir los requisitos legales sobre datos personales.","Registro de tratamiento de datos de salud, consentimiento del cliente y respuesta a derechos ARCO bajo la LOPDP.","Pendiente"],
+  ["6.3","Personas","Concienciación y formación","El personal recibe formación periódica adecuada a su función.","Charla obligatoria en la inducción, microcapacitación trimestral y simulacros de phishing con resultados medidos.","En curso"],
+  ["7.2","Físico","Controles físicos de entrada","Las áreas seguras se protegen con controles de entrada apropiados.","Cuarto de servidores y bodega de controlados bajo llave, con bitácora de visitas.","Implantado"],
+  ["7.4","Físico","Monitoreo de la seguridad física","Vigilar de forma continua los accesos físicos no autorizados.","CCTV en las seis farmacias con 30 días de retención y revisión semanal del grabador.","Implantado"],
+  ["7.11","Físico","Servicios de suministro","Proteger las instalaciones frente a fallas de energía y otros suministros.","UPS por caja, generador en la matriz y prueba semestral de autonomía.","En curso"],
+  ["8.5","Tecnológico","Autenticación segura","Aplicar tecnologías de autenticación acordes al riesgo del acceso.","MFA obligatorio en Microsoft 365, VPN y ERP, con bloqueo tras cinco intentos fallidos.","Pendiente"],
+  ["8.7","Tecnológico","Protección contra código malicioso","Implementar protección antimalware apoyada en la concienciación del usuario.","EDR con consola central en los 30 equipos y bloqueo de USB de almacenamiento en cajas.","En curso"],
+  ["8.13","Tecnológico","Respaldo de la información","Realizar y probar copias de respaldo de información y software.","Esquema 3-2-1: copia local, copia cifrada en la nube y copia desconectada semanal; restauración probada cada mes.","En curso"],
+  ["8.14","Tecnológico","Redundancia de los recursos","Implementar redundancia suficiente para cumplir los requisitos de disponibilidad.","Réplica del ERP en servidor en la nube y enlace secundario 4G en cada sucursal.","Pendiente"],
+  ["8.16","Tecnológico","Actividades de monitoreo","Monitorear redes y sistemas para detectar comportamientos anómalos.","Registro centralizado de eventos y alertas de inicio de sesión desde ubicaciones inusuales.","Pendiente"]
+];
+
+const RIESGOS = [
+  {id:"R-01",n:"Phishing dirigido al personal administrativo",cat:"Humano",p:4,i:4,
+   a:"Correos fraudulentos que suplantan a Microsoft 365 o a un proveedor conocido.",
+   v:"Personal sin capacitación y correo sin autenticación multifactor.",
+   c:"Robo de credenciales y acceso al correo, al ERP y a la base de clientes.",
+   ctl:"A.6.3 Concienciación · A.8.5 Autenticación segura",
+   acc:"Activar MFA en correo, VPN y ERP, y ejecutar simulacros de phishing trimestrales con reporte de resultados.",
+   prio:"Crítica",resp:"TI / RR.HH.",plazo:"1 semana"},
+  {id:"R-02",n:"Ransomware que cifra el servidor ERP/POS",cat:"Malware",p:3,i:5,
+   a:"Código malicioso que llega por un adjunto, una descarga o un USB infectado.",
+   v:"Equipos sin EDR, servidor con parches atrasados y red de cajas sin segmentar.",
+   c:"Cifrado de la base de datos y paralización de la venta en las seis farmacias.",
+   ctl:"A.8.7 Protección contra malware · A.8.8 Gestión de vulnerabilidades",
+   acc:"Desplegar EDR con consola central, abrir ventana mensual de parches y segmentar la red de cajas.",
+   prio:"Crítica",resp:"TI",plazo:"2 semanas"},
+  {id:"R-03",n:"Respaldos sin verificar y sin copia fuera de sitio",cat:"Operativo",p:4,i:5,
+   a:"Falla del disco, borrado accidental o ataque que destruye la base de datos.",
+   v:"Única copia en un disco externo guardado junto al servidor, nunca restaurada a modo de prueba.",
+   c:"Pérdida permanente de ventas, inventario y registro de recetas.",
+   ctl:"A.8.13 Respaldo de la información",
+   acc:"Implantar el esquema 3-2-1 con copia cifrada en la nube y prueba de restauración mensual documentada.",
+   prio:"Crítica",resp:"TI",plazo:"1 semana"},
+  {id:"R-04",n:"Credenciales compartidas entre cajeros",cat:"Accesos",p:4,i:3,
+   a:"Uso indebido de cuentas por parte del propio personal.",
+   v:"Un usuario genérico por sucursal, sin perfiles ni trazabilidad individual.",
+   c:"Alteración de precios, descuentos y anulaciones que nadie puede atribuir.",
+   ctl:"A.5.16 Gestión de identidades · A.5.18 Derechos de acceso",
+   acc:"Crear cuentas nominales, aplicar perfiles por rol y revisar los permisos cada trimestre.",
+   prio:"Alta",resp:"TI / RR.HH.",plazo:"2 semanas"},
+  {id:"R-05",n:"Falla del servidor único de la matriz",cat:"Infraestructura",p:3,i:4,
+   a:"Avería del hardware o corte eléctrico prolongado en la matriz.",
+   v:"Servidor sin redundancia, UPS subdimensionada y sin contrato de soporte.",
+   c:"Caída del ERP en todas las sucursales y detención del cobro.",
+   ctl:"A.8.14 Redundancia · A.7.11 Servicios de suministro",
+   acc:"Replicar el ERP en un servidor en la nube, dimensionar la UPS y contratar soporte 8x5.",
+   prio:"Alta",resp:"TI / Gerencia",plazo:"1 mes"},
+  {id:"R-06",n:"Fuga de datos de salud de los clientes",cat:"Cumplimiento",p:2,i:5,
+   a:"Extracción o divulgación de la base de recetas por un tercero o por personal interno.",
+   v:"Base sin cifrar y exportaciones a Excel sin control ni registro.",
+   c:"Sanción bajo la LOPDP, denuncias de clientes y daño reputacional.",
+   ctl:"A.5.34 Privacidad y protección de PII · A.8.12 Prevención de fuga de datos",
+   acc:"Cifrar la base, bloquear las exportaciones masivas y registrar cada consulta a datos de clientes.",
+   prio:"Alta",resp:"TI",plazo:"1 mes"},
+  {id:"R-07",n:"Caída del enlace de internet y de la VPN",cat:"Infraestructura",p:3,i:3,
+   a:"Falla del proveedor de internet o del equipo de red de la sucursal.",
+   v:"Un solo enlace por local, sin conmutación a un medio alterno.",
+   c:"Sucursales sin conexión al sistema central y sin facturación electrónica.",
+   ctl:"A.8.20 Seguridad de redes · A.8.14 Redundancia",
+   acc:"Contratar enlace secundario 4G/5G con conmutación automática en cada sucursal.",
+   prio:"Media",resp:"TI",plazo:"3 semanas"},
+  {id:"R-08",n:"Equipos sin parches ni antivirus gestionado",cat:"Técnico",p:4,i:3,
+   a:"Explotación de vulnerabilidades conocidas de Windows y del navegador.",
+   v:"Actualizaciones desactivadas y antivirus gratuito sin consola central.",
+   c:"Infección de terminales, robo de datos y propagación hacia el servidor.",
+   ctl:"A.8.1 Dispositivos endpoint · A.8.8 Gestión de vulnerabilidades",
+   acc:"Levantar el inventario, instalar EDR en el 100 % de los equipos y medir el parcheo mensual.",
+   prio:"Alta",resp:"TI",plazo:"2 semanas"},
+  {id:"R-09",n:"Robo o pérdida de equipos en sucursal",cat:"Físico",p:2,i:3,
+   a:"Robo en horario de atención o fuera de él.",
+   v:"Equipos sin anclaje, sin cifrado de disco y fuera del inventario.",
+   c:"Pérdida de la información local y costo de reposición.",
+   ctl:"A.7.2 Controles físicos de entrada · A.8.24 Uso de criptografía",
+   acc:"Cifrar los discos con BitLocker, anclar los equipos y mantener el inventario etiquetado.",
+   prio:"Media",resp:"TI / Administración",plazo:"1 mes"},
+  {id:"R-10",n:"Ataque a la página web y a los pedidos en línea",cat:"Aplicación",p:2,i:3,
+   a:"Inyección de código o modificación del contenido del sitio.",
+   v:"Gestor de contenidos sin actualizar y sin filtro de aplicaciones web.",
+   c:"Caída del canal de pedidos y publicación de contenido falso a nombre de la farmacia.",
+   ctl:"A.8.26 Requisitos de seguridad de las aplicaciones",
+   acc:"Actualizar el gestor de contenidos, activar el WAF del proveedor y respaldar el sitio a diario.",
+   prio:"Media",resp:"TI / Proveedor web",plazo:"1 mes"},
+  {id:"R-11",n:"Error humano en inventario y anulaciones",cat:"Humano",p:4,i:2,
+   a:"Registro equivocado de un ingreso, una venta o una anulación.",
+   v:"Cualquier cajero puede anular y ajustar inventario sin aprobación.",
+   c:"Descuadre de stock, faltantes de caja y decisiones de compra erradas.",
+   ctl:"A.5.10 Uso aceptable · A.8.15 Registro de eventos",
+   acc:"Exigir aprobación del jefe de sucursal para anulaciones y activar la bitácora de cambios del ERP.",
+   prio:"Media",resp:"Jefes de sucursal",plazo:"3 semanas"},
+  {id:"R-12",n:"Dependencia de un único técnico de TI",cat:"Operativo",p:3,i:3,
+   a:"Ausencia, enfermedad o salida del responsable de TI.",
+   v:"Procedimientos no documentados y claves de administración en una sola persona.",
+   c:"Imposibilidad de recuperar los sistemas dentro del tiempo tolerable.",
+   ctl:"A.5.2 Roles y responsabilidades · A.5.29 Seguridad durante la disrupción",
+   acc:"Documentar los procedimientos, custodiar las claves en una bóveda y contratar un proveedor de respaldo.",
+   prio:"Media",resp:"Gerencia",plazo:"1 mes"},
+  {id:"R-13",n:"Fraude por suplantación de proveedores",cat:"Humano",p:2,i:4,
+   a:"Correo que, a nombre de un proveedor real, pide cambiar la cuenta bancaria de pago.",
+   v:"Pagos aprobados únicamente por correo, sin verificación por otro canal.",
+   c:"Transferencia de fondos a una cuenta fraudulenta.",
+   ctl:"A.5.14 Transferencia de información · A.6.3 Concienciación",
+   acc:"Verificar por teléfono todo cambio de datos bancarios y exigir doble aprobación sobre un monto definido.",
+   prio:"Media",resp:"Contabilidad / Gerencia",plazo:"2 semanas"},
+  {id:"R-14",n:"Corte eléctrico prolongado",cat:"Físico",p:3,i:3,
+   a:"Interrupción del servicio eléctrico en Machala o en una sucursal.",
+   v:"UPS subdimensionada y sin generador en los locales.",
+   c:"Apagado abrupto del servidor, pérdida de transacciones y cierre temporal del local.",
+   ctl:"A.7.11 Servicios de suministro",
+   acc:"Instalar UPS por caja, generador en la matriz y probar la autonomía cada semestre.",
+   prio:"Media",resp:"Administración",plazo:"2 meses"},
+  {id:"R-15",n:"Indisponibilidad del sistema de videovigilancia",cat:"Físico",p:2,i:2,
+   a:"Falla o saturación del grabador de las cámaras.",
+   v:"Nadie vigila el estado del equipo ni hay retención definida.",
+   c:"Ausencia de evidencia ante un robo o una reclamación.",
+   ctl:"A.7.4 Monitoreo de la seguridad física",
+   acc:"Configurar alerta del estado del grabador y fijar una retención mínima de 30 días.",
+   prio:"Baja",resp:"Administración",plazo:"2 meses"}
+];
+
+/* ===================== UTILIDADES ===================== */
+const $ = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function nivelDe(v){ return v>=15?"Crítico": v>=10?"Alto": v>=5?"Medio":"Bajo"; }
+function slug(n){ return {"Crítico":"critico","Alto":"alto","Medio":"medio","Bajo":"bajo"}[n]; }
+RIESGOS.forEach(r=>{ r.v2 = r.p*r.i; r.nivel = nivelDe(r.v2); });
+
+/* ===================== 1. ACTIVOS ===================== */
+const ICO_TIPO = {"Información":"i-receta","Software":"i-monitor","Hardware":"i-servidor","Servicio":"i-nube","Humano":"i-persona"};
+$("#t-activos").innerHTML = ACTIVOS.map(a=>{
+  const cls = a[3]==="Alta" ? "b-critico" : "b-medio";
+  const ico = '<svg class="ico" aria-hidden="true"><use href="#'+(ICO_TIPO[a[1]]||"i-frasco")+'"></use></svg>';
+  return "<tr><td style=\"color:var(--fg);font-weight:500\">"+ico+esc(a[0])+"</td><td>"+esc(a[1])+"</td><td>"+esc(a[2])+
+    "</td><td><span class=\"badge "+cls+"\">"+esc(a[3])+"</span></td><td>"+esc(a[4])+"</td></tr>";
+}).join("");
+
+/* ===================== 2. CID + FÍSICA/LÓGICA ===================== */
+function pintaCID(k){
+  $("#cid-panel").innerHTML = '<div class="card" style="grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start">'+
+    '<div class="cid-letter">'+k+'</div><div class="grid g2" style="gap:14px">'+
+    CID[k].map(x=>'<div><h4>'+esc(x[0])+'</h4><p>'+esc(x[1])+'</p></div>').join("")+'</div></div>';
+}
+$$('[data-cid]').forEach(b=> b.addEventListener("click",()=>{
+  $$('[data-cid]').forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); pintaCID(b.dataset.cid);
+}));
+pintaCID("C");
+
+function pintaSL(f){
+  $("#sl-grid").innerHTML = SEGFIS.filter(s=> f==="todas"||s[0]===f).map(s=>
+    '<div class="card"><span class="badge '+(s[0]==="fisica"?"b-neutral":"b-acc")+'">'+(s[0]==="fisica"?"Física":"Lógica")+
+    '</span><h3 style="margin-top:8px">'+esc(s[1])+'</h3><p>'+esc(s[2])+'</p></div>').join("");
+}
+$$('[data-sl]').forEach(b=> b.addEventListener("click",()=>{
+  $$('[data-sl]').forEach(x=>x.classList.remove("on")); b.classList.add("on"); pintaSL(b.dataset.sl);
+}));
+pintaSL("todas");
+
+/* ===================== 3. CLASIFICACIÓN ===================== */
+$("#clas-grid").innerHTML = CLASES.map(c=>
+  '<div class="clas"><div class="bar" style="background:'+c[1]+'"></div><div class="in">'+
+  '<h3 style="color:'+c[1]+'">'+esc(c[0])+'</h3><dl>'+
+  '<dt>Ejemplos</dt><dd>'+esc(c[2])+'</dd>'+
+  '<dt>Quién accede</dt><dd>'+esc(c[3])+'</dd>'+
+  '<dt>Cómo se protege</dt><dd>'+esc(c[4])+'</dd></dl></div></div>').join("");
+
+/* ===================== 4. CONTROLES ISO ===================== */
+let fTema="todos";
+function claseEstado(e){ return e==="Implantado"?"s-impl": e==="En curso"?"s-curso":"s-pend"; }
+function pintaISO(){
+  const fe = $("#f-estado").value;
+  const list = CONTROLES.filter(c=> (fTema==="todos"||c[1]===fTema) && (fe==="todos"||c[5]===fe));
+  $("#iso-grid").innerHTML = list.map(c=>
+    '<article class="ctrl"><div class="top"><div><div class="code">A.'+esc(c[0])+' · '+esc(c[1])+'</div>'+
+    '<h3>'+esc(c[2])+'</h3></div><span class="state '+claseEstado(c[5])+'">'+esc(c[5])+'</span></div>'+
+    '<p>'+esc(c[3])+'</p><div class="apply">'+esc(c[4])+'</div></article>').join("")
+    || '<p class="note">Ningún control coincide con el filtro.</p>';
+  $("#c-iso").textContent = list.length+" de "+CONTROLES.length+" controles";
+}
+$$('[data-tema]').forEach(b=> b.addEventListener("click",()=>{
+  $$('[data-tema]').forEach(x=>x.classList.remove("on")); b.classList.add("on"); fTema=b.dataset.tema; pintaISO();
+}));
+$("#f-estado").addEventListener("change",pintaISO);
+pintaISO();
+
+/* ===================== 5. RIESGOS ===================== */
+let fNivel="todos", fCelda=null;
+
+function pintaMatriz(){
+  const m = $("#matrix"); let h="";
+  for(let i=5;i>=1;i--){
+    h += '<div class="m-axis">'+i+'</div>';
+    for(let p=1;p<=5;p++){
+      const val=p*i, nv=nivelDe(val), ids=RIESGOS.filter(r=>r.p===p&&r.i===i);
+      const sel = fCelda && fCelda[0]===p && fCelda[1]===i ? " sel":"";
+      h += '<button class="m-cell m-'+slug(nv)+(ids.length?"":" empty")+sel+'" data-p="'+p+'" data-i="'+i+
+           '" title="Probabilidad '+p+' × Impacto '+i+' = '+val+' ('+nv+')" aria-label="'+ids.length+' riesgos, probabilidad '+p+', impacto '+i+'">'+
+           '<span class="c">'+(ids.length||"")+'</span><span class="s">'+(ids.length?ids.map(r=>r.id.replace("R-","")).join(" "):val)+'</span></button>';
+    }
+    h += '';
+  }
+  h += '<div class="m-axis"></div>'+[1,2,3,4,5].map(p=>'<div class="m-axis">'+p+'</div>').join("");
+  m.innerHTML = h;
+  $$(".m-cell",m).forEach(c=> c.addEventListener("click",()=>{
+    const p=+c.dataset.p, i=+c.dataset.i;
+    fCelda = (fCelda && fCelda[0]===p && fCelda[1]===i) ? null : [p,i];
+    if(fCelda){ fNivel="todos"; $$('[data-nivel]').forEach(x=>x.classList.toggle("on",x.dataset.nivel==="todos")); }
+    pintaMatriz(); pintaRiesgos();
+    document.getElementById("t-riesgos").scrollIntoView({behavior:"smooth",block:"center"});
+  }));
+}
+
+function pintaBarras(){
+  const niveles=["Crítico","Alto","Medio","Bajo"];
+  const max = Math.max.apply(null, niveles.map(n=>RIESGOS.filter(r=>r.nivel===n).length));
+  $("#bars-nivel").innerHTML = niveles.map(n=>{
+    const c=RIESGOS.filter(r=>r.nivel===n).length;
+    return '<div class="bar-row"><span class="badge b-'+slug(n)+'">'+n+'</span>'+
+      '<div class="track"><div class="fill" style="width:'+(max?c/max*100:0)+'%;background:var(--'+slug(n)+')"></div></div>'+
+      '<span class="v">'+c+'</span></div>';
+  }).join("");
+  const cats={}; RIESGOS.forEach(r=> cats[r.cat]=(cats[r.cat]||0)+1);
+  const pares=Object.entries(cats).sort((a,b)=>b[1]-a[1]); const mx=pares[0][1];
+  $("#bars-cat").innerHTML = pares.map(([k,v])=>
+    '<div class="bar-row"><span style="color:var(--muted)">'+esc(k)+'</span>'+
+    '<div class="track"><div class="fill" style="width:'+(v/mx*100)+'%;background:var(--accent)"></div></div>'+
+    '<span class="v">'+v+'</span></div>').join("");
+}
+
+function pintaRiesgos(){
+  const q = $("#f-busca").value.trim().toLowerCase();
+  const orden = $("#f-orden").value;
+  let list = RIESGOS.filter(r=>{
+    if(fCelda && (r.p!==fCelda[0]||r.i!==fCelda[1])) return false;
+    if(!fCelda && fNivel!=="todos" && r.nivel!==fNivel) return false;
+    if(q){ const t=(r.id+" "+r.n+" "+r.cat+" "+r.a+" "+r.v+" "+r.c+" "+r.ctl).toLowerCase(); if(t.indexOf(q)<0) return false; }
+    return true;
+  });
+  const cmp = {nivel:(a,b)=>b.v2-a.v2, id:(a,b)=>a.id.localeCompare(b.id), prob:(a,b)=>b.p-a.p, imp:(a,b)=>b.i-a.i}[orden];
+  list = list.slice().sort(cmp);
+  $("#t-riesgos").innerHTML = list.map(r=>
+    '<tr class="risk lv-'+slug(r.nivel)+'" data-id="'+r.id+'" tabindex="0">'+
+      '<td class="id"><span class="chev">▶</span> '+r.id+'</td>'+
+      '<td style="color:var(--fg);font-weight:500">'+esc(r.n)+'</td>'+
+      '<td>'+esc(r.cat)+'</td><td class="num">'+r.p+'</td><td class="num">'+r.i+'</td>'+
+      '<td class="num" style="font-family:var(--font-mono);color:var(--fg)">'+r.v2+'</td>'+
+      '<td><span class="badge b-'+slug(r.nivel)+'">'+r.nivel+'</span></td></tr>'+
+    '<tr class="detail" hidden><td colspan="7"><div class="detail-in">'+
+      '<div><h4>Amenaza</h4><p>'+esc(r.a)+'</p></div>'+
+      '<div><h4>Vulnerabilidad</h4><p>'+esc(r.v)+'</p></div>'+
+      '<div><h4>Consecuencia</h4><p>'+esc(r.c)+'</p></div>'+
+      '<div><h4>Control ISO 27001</h4><p style="font-family:var(--font-mono);font-size:12.5px;color:var(--accent)">'+esc(r.ctl)+'</p></div>'+
+    '</div></td></tr>').join("") || '<tr><td colspan="7" style="padding:18px">Ningún riesgo coincide con el filtro.</td></tr>';
+
+  const extra = fCelda ? " · casilla P"+fCelda[0]+"×I"+fCelda[1] : "";
+  $("#c-riesgos").textContent = list.length+" de "+RIESGOS.length+" riesgos"+extra;
+
+  $$("tr.risk").forEach(tr=>{
+    const toggle = ()=>{ const d=tr.nextElementSibling; d.hidden=!d.hidden; tr.classList.toggle("open",!d.hidden); };
+    tr.addEventListener("click",toggle);
+    tr.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
+  });
+}
+$$('[data-nivel]').forEach(b=> b.addEventListener("click",()=>{
+  $$('[data-nivel]').forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  fNivel=b.dataset.nivel; fCelda=null; pintaMatriz(); pintaRiesgos();
+}));
+$("#f-busca").addEventListener("input",pintaRiesgos);
+$("#f-orden").addEventListener("change",pintaRiesgos);
+pintaMatriz(); pintaBarras(); pintaRiesgos();
+
+/* ===================== 6. PLAN DE ACCIÓN ===================== */
+const KEY="farmasalud.plan.v1";
+let hechas = {};
+try{ hechas = JSON.parse(localStorage.getItem(KEY)||"{}") || {}; }catch(e){ hechas={}; }
+function guarda(){ try{ localStorage.setItem(KEY,JSON.stringify(hechas)); }catch(e){} }
+let fPrio="todas";
+
+function pintaPlan(){
+  const list = RIESGOS.filter(r=> fPrio==="todas"||r.prio===fPrio);
+  $("#plan-grid").innerHTML = list.map(r=>
+    '<div class="accion'+(hechas[r.id]?" done":"")+'" data-id="'+r.id+'">'+
+      '<input type="checkbox" id="chk-'+r.id+'"'+(hechas[r.id]?" checked":"")+' aria-label="Marcar acción '+r.id+' como completada">'+
+      '<div class="body"><h3>'+r.id+' · '+esc(r.n)+'</h3>'+
+      '<p class="ctl">'+esc(r.ctl)+'</p>'+
+      '<p style="margin-top:6px">'+esc(r.acc)+'</p>'+
+      '<div class="meta"><span class="badge b-'+slug(r.nivel)+'">Riesgo '+r.nivel.toLowerCase()+'</span>'+
+      '<span class="badge '+(r.prio==="Crítica"?"b-critico":r.prio==="Alta"?"b-alto":r.prio==="Media"?"b-medio":"b-bajo")+'">Prioridad '+esc(r.prio)+'</span>'+
+      '<span class="chip">'+esc(r.resp)+'</span><span class="chip">'+esc(r.plazo)+'</span></div></div></div>').join("");
+  $("#c-plan").textContent = list.length+" de "+RIESGOS.length+" acciones";
+  $$('.accion input[type=checkbox]').forEach(cb=> cb.addEventListener("change",()=>{
+    const id = cb.closest(".accion").dataset.id;
+    if(cb.checked) hechas[id]=1; else delete hechas[id];
+    guarda(); cb.closest(".accion").classList.toggle("done",cb.checked); avance();
+  }));
+  avance();
+}
+function avance(){
+  const n = RIESGOS.filter(r=>hechas[r.id]).length, t = RIESGOS.length;
+  $("#p-text").textContent = n+" de "+t+" acciones completadas";
+  $("#p-fill").style.width = (n/t*100)+"%";
+}
+$$('[data-prio]').forEach(b=> b.addEventListener("click",()=>{
+  $$('[data-prio]').forEach(x=>x.classList.remove("on")); b.classList.add("on"); fPrio=b.dataset.prio; pintaPlan();
+}));
+$("#p-reset").addEventListener("click",()=>{ hechas={}; guarda(); pintaPlan(); });
+pintaPlan();
+
+/* ===================== KPIs ===================== */
+(function(){
+  const prom = RIESGOS.reduce((s,r)=>s+r.v2,0)/RIESGOS.length;
+  const pts = CONTROLES.reduce((s,c)=> s + (c[5]==="Implantado"?1:c[5]==="En curso"?0.5:0), 0);
+  $("#k-act").textContent = ACTIVOS.length;
+  $("#k-rie").textContent = RIESGOS.length;
+  $("#k-cri").textContent = RIESGOS.filter(r=>r.nivel==="Crítico").length;
+  $("#k-prom").textContent = prom.toFixed(1).replace(".",",");
+  $("#k-cob").textContent = Math.round(pts/CONTROLES.length*100)+"%";
+})();
+
+/* ===================== ICONOS DE SECCIÓN ===================== */
+(function(){
+  const map = {empresa:"i-cruz",seguridad:"i-escudo",clasificacion:"i-receta",iso:"i-candado",riesgos:"i-alerta",plan:"i-check"};
+  Object.keys(map).forEach(id=>{
+    const h = document.querySelector("#"+id+" .sec-head");
+    if(!h) return;
+    const s = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    s.setAttribute("class","ico sec-ico"); s.setAttribute("aria-hidden","true");
+    const u = document.createElementNS("http://www.w3.org/2000/svg","use");
+    u.setAttribute("href","#"+map[id]); s.appendChild(u);
+    h.insertBefore(s, h.querySelector("h2"));
+  });
+})();
+
+/* ===================== NAVEGACIÓN ===================== */
+(function(){
+  const links = $$("nav.rail a");
+  const secs = links.map(a=> document.querySelector(a.getAttribute("href")));
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){
+      const i = secs.indexOf(e.target);
+      links.forEach((l,j)=> l.classList.toggle("on", j===i));
+    }});
+  },{rootMargin:"-25% 0px -65% 0px"});
+  secs.forEach(s=> s && io.observe(s));
+  links.forEach(a=> a.addEventListener("click",e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute("href")).scrollIntoView({behavior:"smooth",block:"start"});
+  }));
+})();
+</script>
